@@ -3,24 +3,90 @@
 // Find the Letterboxd editor element
 const editor = document.getElementById('frm-review');
 
+// Create a new container element for your buttons
+const buttonContainer = document.createElement('div');
+buttonContainer.className = 'button-container';
+
 // Function to insert an anchor link
-function insertAnchorLink() {
-    const linkUrl = prompt("Enter the URL for the anchor link:");
-    if (linkUrl) {
-        const anchorLink = document.createElement('a');
-        anchorLink.href = linkUrl;
-        anchorLink.textContent = "Link Text";
-        editor.appendChild(anchorLink);
+function addAnchorLink(event) {
+    event.preventDefault();
+    console.log("Add Anchor Link clicked!");
+    const textarea = document.getElementById('frm-review');
+
+    let linkUrl = prompt("Enter the URL for the anchor link:");
+    if (linkUrl && isValidURL(linkUrl)) {
+        // Add protocol if missing
+        if (!/^https?:\/\//i.test(linkUrl)) {
+            linkUrl = 'https://' + linkUrl;
+        }
+
+        const anchorLink = `<a href="${linkUrl}" target="_blank">Link Text</a>`;
+        const cursorPos = textarea.selectionStart;
+        const textBeforeCursor = textarea.value.substring(0, cursorPos);
+        const textAfterCursor = textarea.value.substring(cursorPos);
+
+        textarea.value = `${textBeforeCursor}${anchorLink}${textAfterCursor}`;
+
+        // Set the cursor position after the inserted anchor link
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + anchorLink.length;
+    } else if (linkUrl) {
+        alert("Invalid URL. Please enter a valid URL.");
     }
+
+    // Focus back on the textarea
+    textarea.focus();
+}
+
+// Function to validate URL
+function isValidURL(url) {
+    // Add protocol if missing
+    if (!/^https?:\/\//i.test(url)) {
+        url = 'https://' + url;
+    }
+
+    // Validate URL
+    const pattern = new RegExp('^(https?:\\/\\/)?' + // protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    return pattern.test(url);
 }
 
 // Function to toggle bold style
-function toggleBold() {
-    document.execCommand('bold');
+function toggleBold(event) {
+    event.preventDefault();
+    console.log("Bold clicked!");
+    const textarea = document.getElementById('frm-review');
+
+    // Check if there's any text selected
+    const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+
+    // Check if there's a selection
+    if (selection) {
+        // Wrap the selected text with <strong> tags for bold style
+        textarea.setRangeText(`<strong>${selection}</strong>`);
+    } else {
+        // Insert <strong> tags at the cursor position
+        const cursorPos = textarea.selectionStart;
+        const textBeforeCursor = textarea.value.substring(0, cursorPos);
+        const textAfterCursor = textarea.value.substring(cursorPos);
+
+        textarea.value = `${textBeforeCursor}<strong></strong>${textAfterCursor}`;
+
+        // Set the cursor position inside the <strong> tags
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + 8; // Adjust this value if needed
+    }
+
+    // Focus back on the textarea
+    textarea.focus();
 }
 
 // Function to toggle italic style
-function toggleItalic() {
+function toggleItalic(event) {
+    event.preventDefault();
+    console.log("Italic clicked!");
     const textarea = document.getElementById('frm-review');
 
     // Check if there's any text selected
@@ -39,52 +105,41 @@ function toggleItalic() {
         textarea.value = `${textBeforeCursor}<em></em>${textAfterCursor}`;
 
         // Set the cursor position inside the <em> tags
-        textarea.selectionStart = textarea.selectionEnd = cursorPos + 4; // Adjust this value if needed
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + 4; 
     }
 
     // Focus back on the textarea
     textarea.focus();
 }
 
-function insertHeading(level) {
-    const heading = document.createElement('h' + level);
-    heading.textContent = "Heading Text";
-    editor.appendChild(heading);
-}
+// Function to toggle blockquote
+function insertBlockquote(event) {
+    event.preventDefault();
+    console.log("Blockquote clicked!");
+    const textarea = document.getElementById('frm-review');
 
-function insertList(type) {
-    const list = document.createElement(type);
-    const listItem = document.createElement('li');
-    listItem.textContent = "List Item";
-    list.appendChild(listItem);
-    editor.appendChild(list);
-}
+    // Check if there's any text selected
+    const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
 
-function insertImage() {
-    const imageUrl = prompt("Enter the URL of the image:");
-    if (imageUrl) {
-        const image = document.createElement('img');
-        image.src = imageUrl;
-        editor.appendChild(image);
+    // Check if there's a selection
+    if (selection) {
+        // Wrap the selected text with <em> tags for italic style
+        textarea.setRangeText(`<blockquote>${selection}</blockquote>`);
+    } else {
+        const cursorPos = textarea.selectionStart;
+        const textBeforeCursor = textarea.value.substring(0, cursorPos);
+        const textAfterCursor = textarea.value.substring(cursorPos);
+
+        textarea.value = `${textBeforeCursor}<blockquote></blockquote>${textAfterCursor}`;
+
+        // Set the cursor position inside the <blockquote> tags
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + 12;
     }
+
+    // Focus back on the textarea
+    textarea.focus();
 }
 
-function insertHorizontalRule() {
-    const hr = document.createElement('hr');
-    editor.appendChild(hr);
-}
-
-function insertDiv() {
-    const div = document.createElement('div');
-    div.textContent = "Div Content";
-    editor.appendChild(div);
-}
-
-function insertParagraph() {
-    const paragraph = document.createElement('p');
-    paragraph.textContent = "Paragraph Text";
-    editor.appendChild(paragraph);
-}
 
 ///////////////////CREATE BUTTONS///////////////////
 
@@ -93,6 +148,33 @@ function createAndInsertButton(text, clickHandler) {
     const button = document.createElement('button');
     button.textContent = text;
     button.addEventListener('click', clickHandler);
+    button.classList.add('button-container');
+
+    // Set styles for the button
+    button.style.backgroundColor = '#456';
+    button.style.color = '#9ab';
+    button.style.padding = '8px 16px';
+    button.style.border = 'none';
+    button.style.borderRadius = '4px';
+    button.style.cursor = 'pointer';
+    button.style.fontFamily = 'Graphik-Semibold-Web, sans-serif';
+    button.style.fontWeight = '400';
+    button.style.textTransform = 'uppercase';
+    button.style.letterSpacing = '0.077em';
+    button.style.lineHeight = '17px';
+    button.style.textDecoration = 'none';
+    button.style.transition = 'color 0.3s';
+
+    // Hover effect
+    button.addEventListener('mouseover', function() {
+        button.style.color = '#fff';
+    });
+
+    button.addEventListener('mouseout', function() {
+        button.style.color = '#9ab';
+    });
+
+    buttonContainer.appendChild(button);
 
     // Find the target element (textarea with ID "frm-review")
     const targetElement = document.getElementById('frm-review');
@@ -105,32 +187,16 @@ function createAndInsertButton(text, clickHandler) {
 }
 
 // Create button for anchor link
-createAndInsertButton("Add Anchor Link", insertAnchorLink);
+createAndInsertButton("Add Anchor Link", (event) => addAnchorLink(event), buttonContainer);
 
-// Create buttons for toggling bold and italic styles
-createAndInsertButton("Bold", toggleBold);
-createAndInsertButton("Italic", toggleItalic);
+// Create button for Blockquote
+createAndInsertButton("Blockquote", (event) => insertBlockquote(event), buttonContainer);
 
-// Create buttons for inserting headings
-//for (let i = 1; i <= 6; i++) {
-//    createAndInsertButton("Heading " + i, () => insertHeading(i));
-//}
+// Create buttons for toggling bold
+createAndInsertButton("Bold", (event) => toggleBold(event), buttonContainer);
 
-// Create buttons for inserting lists
-//createAndInsertButton("Insert Unordered List", () => insertList('ul'));
-//createAndInsertButton("Insert Ordered List", () => insertList('ol'));
-
-// Create button for inserting images
-//createAndInsertButton("Insert Image", insertImage);
-
-// Create button for inserting horizontal rule
-//createAndInsertButton("Insert Horizontal Rule", insertHorizontalRule);
-
-// Create button for inserting a div
-//createAndInsertButton("Insert Div", insertDiv);
-
-// Create button for inserting a paragraph
-//createAndInsertButton("Insert Paragraph", insertParagraph);
+// Create buttons for toggling italic
+createAndInsertButton("Italic", (event) => toggleItalic(event), buttonContainer);
 
 // Listen for changes in the text area
 document.getElementById('frm-review').addEventListener('input', function(event) {

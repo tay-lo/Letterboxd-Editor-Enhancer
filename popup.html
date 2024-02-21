@@ -1,3 +1,5 @@
+<!-- Realized that I don't want this to be a popup. Saving the development in case a future desire arises. 
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -18,12 +20,37 @@
             left: 50%;
             transform: translate(-50%, -50%);
         }
+
+        /* Style for the buttons */
+        .button-container {
+            background-color: #456; /* Background color */
+            color: #9ab; /* Text color */
+            padding: 8px 16px; /* Padding */
+            border: none; /* No border */
+            border-radius: 4px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor */
+            font-family: Graphik-Semibold-Web, sans-serif; /* Font family */
+            font-weight: 400; /* Font weight */
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 0.077em; /* Letter spacing */
+            line-height: 17px; /* Line height */
+            text-decoration: none; /* No text decoration */
+            transition: color 0.3s; /* Smooth color transition */
+        }
+
+        /* Hover effect */
+        .button-container:hover {
+            color: #fff; /* Change text color on hover */
+        }
     </style>
 </head>
 <body>
     <div id="popup-container">
         <h2>Letterboxd Editor Enhancer</h2>
-        <p>Your extension popup content goes here.</p>
+        <button id="Bold" class="button-container">Bold</button>
+        <button id="Italic" class="button-container">Italic</button>
+        <button id="Add Anchor Link" class="button-container">Add Anchor Link</button>
     </div>
 </body>
 </html>
+-->

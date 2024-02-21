@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Letterboxd Editor Enhancer",
     "version": "1.0",
-    "description": "Enhance the Letterboxd editor with additional HTML formatting options.",
+    "description": "Enhance the Letterboxd review editor with additional HTML formatting options.",
     "permissions": [
       "activeTab"
     ],

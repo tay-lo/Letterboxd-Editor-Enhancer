@@ -13,6 +13,11 @@ function addAnchorLink(event) {
     console.log("Add Anchor Link clicked!");
     const textarea = document.getElementById('frm-review');
 
+    // Check if there's any text selected
+    const selection = textarea.value.substring(textarea.selectionStart, textarea.selectionEnd);
+
+    let anchorLink;
+
     let linkUrl = prompt("Enter the URL for the anchor link:");
     if (linkUrl && isValidURL(linkUrl)) {
         // Add protocol if missing
@@ -20,15 +25,22 @@ function addAnchorLink(event) {
             linkUrl = 'https://' + linkUrl;
         }
 
-        const anchorLink = `<a href="${linkUrl}" target="_blank">Link Text</a>`;
         const cursorPos = textarea.selectionStart;
         const textBeforeCursor = textarea.value.substring(0, cursorPos);
         const textAfterCursor = textarea.value.substring(cursorPos);
 
-        textarea.value = `${textBeforeCursor}${anchorLink}${textAfterCursor}`;
+        if (selection) {
+            anchorLink = `<a href="${linkUrl}">${selection}</a>`;
+            textarea.setRangeText(`${anchorLink}`);
+
+        } else {
+            anchorLink = `<a href="${linkUrl}">Link Text</a>`;
+            textarea.value = `${textBeforeCursor}${anchorLink}${textAfterCursor}`;
+        }
 
         // Set the cursor position after the inserted anchor link
         textarea.selectionStart = textarea.selectionEnd = cursorPos + anchorLink.length;
+        
     } else if (linkUrl) {
         alert("Invalid URL. Please enter a valid URL.");
     }
@@ -139,7 +151,6 @@ function insertBlockquote(event) {
     // Focus back on the textarea
     textarea.focus();
 }
-
 
 ///////////////////CREATE BUTTONS///////////////////
 
